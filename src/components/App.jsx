@@ -32,7 +32,7 @@ class App extends Component {
         contacts.find(contact => contact.number === number)
         )
     {
-      return Notiflix.Notify.failure(`${contact.name}is already in contacts`);
+      return Notiflix.Notify.failure(`${contact.name} is already in contacts`);
     }
 
     this.setState(({ contacts }) => ({
