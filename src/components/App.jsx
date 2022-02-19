@@ -4,27 +4,22 @@ import { nanoid } from 'nanoid'
 import Section from "./section/section";
 import ContactList from "./contacts/contactsList";
 import FilterContacts from "./filter/filterInput";
-// all modules
+import Phonebooks from './patch/book.json'
 import Notiflix from 'notiflix';
 
 
 class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
-      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
-      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
-    ],
+    contacts: [],
     filter: '',
   }
 
   formSubmitContactAdd = ({name,number}) => {
     const { contacts } = this.state;
     const contact = {
+      id:nanoid(),
       name,
       number,
-      id:nanoid(),
     }
 
     if (
@@ -50,8 +45,27 @@ class App extends Component {
   onHandleFilter = e => {
     this.setState({filter:e.currentTarget.value})
   }
-
+  componentDidMount() { 
+    console.log('App component DidMont');
+    const contactsLocalStorage = localStorage.getItem('contacts')
+    const parsedContacts = JSON.parse(contactsLocalStorage)
+    
+    if(parsedContacts){this.setState({ contacts: parsedContacts })}
+    
+    console.log(parsedContacts);
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { contacts } = this.state;
+    console.log('App component DidUpdate');
+    if (contacts !== prevState.contacts) {
+      console.log("refresh");
+      localStorage.setItem("contacts",JSON.stringify(contacts))
+    }
+    console.log(prevState);
+    console.log(this.state);
+  }
   render() {
+    console.log("APP render");
     const { filter } = this.state;
     const normalizeContacts=filter.toLocaleLowerCase()
     const visibleContacts = this.state.contacts.filter(contact => contact.name.toLocaleLowerCase().includes(normalizeContacts));
